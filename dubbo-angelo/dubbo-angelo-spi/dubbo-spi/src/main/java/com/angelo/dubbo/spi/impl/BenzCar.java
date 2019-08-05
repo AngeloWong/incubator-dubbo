@@ -12,6 +12,12 @@ public class BenzCar implements CarInterface {
         this.carInterface = carInterface;
     }
 
+//    private PersonInterface personInterface;
+
+//    public void setPersonInterface(PersonInterface personInterface) {
+//        this.personInterface = personInterface;
+//    }
+
     @Override
     public void getColor(URL url) {
         System.out.println("HIA HIA HIA");
