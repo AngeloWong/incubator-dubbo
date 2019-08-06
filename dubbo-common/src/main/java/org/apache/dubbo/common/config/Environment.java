@@ -103,6 +103,13 @@ public class Environment {
     }
 
     /**
+     * 配置存在的地方：
+     *  1. bean初始化值（xml、注解等）
+     *  2. -D 系统配置
+     *  3. 配置中心-全局配置
+     *  4. 配置中心-app全局配置
+     *  5. dubbo.properties
+     *
      * Create new instance for each call, since it will be called only at startup, I think there's no big deal of the potential cost.
      * Otherwise, if use cache, we should make sure each Config has a unique id which is difficult to guarantee because is on the user's side,
      * especially when it comes to ServiceConfig and ReferenceConfig.
@@ -112,12 +119,13 @@ public class Environment {
      * @return
      */
     public CompositeConfiguration getConfiguration(String prefix, String id) {
+        // 混合配置项
         CompositeConfiguration compositeConfiguration = new CompositeConfiguration();
         // Config center has the highest priority
-        compositeConfiguration.addConfiguration(this.getSystemConfig(prefix, id));
-        compositeConfiguration.addConfiguration(this.getAppExternalConfig(prefix, id));
-        compositeConfiguration.addConfiguration(this.getExternalConfig(prefix, id));
-        compositeConfiguration.addConfiguration(this.getPropertiesConfig(prefix, id));
+        compositeConfiguration.addConfiguration(this.getSystemConfig(prefix, id));          // 系统配置  -D => 优先级最高
+        compositeConfiguration.addConfiguration(this.getAppExternalConfig(prefix, id));     // 配置中心-app全局配置
+        compositeConfiguration.addConfiguration(this.getExternalConfig(prefix, id));        // 配置中心-全局配置
+        compositeConfiguration.addConfiguration(this.getPropertiesConfig(prefix, id));      // dubbo.properties
         return compositeConfiguration;
     }
 

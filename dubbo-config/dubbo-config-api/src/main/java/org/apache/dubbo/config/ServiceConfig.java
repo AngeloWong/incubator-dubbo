@@ -325,6 +325,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     }
 
     public synchronized void export() {
+        // 检查以及更新配置
         checkAndUpdateSubConfigs();
 
         if (provider != null) {
@@ -342,7 +343,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         if (delay != null && delay > 0) {
             delayExportExecutor.schedule(this::doExport, delay, TimeUnit.MILLISECONDS);
         } else {
-            doExport();
+            doExport();     // 直接导出
         }
     }
 
@@ -395,20 +396,33 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         unexported = true;
     }
 
+    /**
+     * 多协议、多注册中心
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
-        List<URL> registryURLs = loadRegistries(true);
+        List<URL> registryURLs = loadRegistries(true);      // 注册中心URL：registry://xxx
         for (ProtocolConfig protocolConfig : protocols) {
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }
 
+    /**
+     *  1. 翻译成URL
+     *  2. URL保存到ZK
+     */
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         String name = protocolConfig.getName();
         if (name == null || name.length() == 0) {
             name = Constants.DUBBO;
         }
 
+        /**
+         * 收集参数内容至map
+         * 由上而下，实现:
+         *  1. 子节点覆盖父节点
+         *  2. 子节点取父节点配置信息
+         */
         Map<String, String> map = new HashMap<String, String>();
         map.put(Constants.SIDE_KEY, Constants.PROVIDER_SIDE);
         appendRuntimeParameters(map);
@@ -416,7 +430,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         appendParameters(map, module);
         appendParameters(map, provider, Constants.DEFAULT_KEY);
         appendParameters(map, protocolConfig);
-        appendParameters(map, this);
+        appendParameters(map, this);    // 子节点配置信息最后加载
         if (methods != null && !methods.isEmpty()) {
             for (MethodConfig method : methods) {
                 appendParameters(map, method, method.getName());
@@ -497,7 +511,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 map.put(Constants.TOKEN_KEY, token);
             }
         }
-        if (Constants.LOCAL_PROTOCOL.equals(protocolConfig.getName())) {
+        if (Constants.LOCAL_PROTOCOL.equals(protocolConfig.getName())) {    // injvm, 直连提供者
             protocolConfig.setRegister(false);
             map.put("notify", "false");
         }
@@ -509,6 +523,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
         String host = this.findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = this.findConfigedPorts(protocolConfig, name, map);
+        // 翻译成URL，包含map内容
         URL url = new URL(name, host, port, (contextPath == null || contextPath.length() == 0 ? "" : contextPath + "/") + path, map);
 
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -547,6 +562,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                             registryURL = registryURL.addParameter(Constants.PROXY_KEY, proxy);
                         }
 
+                        // invoker 执行某个服务
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 

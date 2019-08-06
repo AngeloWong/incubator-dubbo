@@ -77,6 +77,8 @@ public class HttpProtocol extends AbstractProxyProtocol {
         String addr = getAddr(url);
         HttpServer server = serverMap.get(addr);
         if (server == null) {
+            // 启动服务，eg. tomcat, jetty, servlet
+            // 启动后，通过InternalHandler处理请求
             server = httpBinder.bind(url, new InternalHandler());
             serverMap.put(addr, server);
         }

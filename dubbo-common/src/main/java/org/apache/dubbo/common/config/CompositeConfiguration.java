@@ -56,7 +56,7 @@ public class CompositeConfiguration implements Configuration {
     }
 
     public void addConfiguration(int pos, Configuration configuration) {
-        this.configList.add(pos, configuration);
+        this.configList.add(pos, configuration);        // 此处的configList 是 LinkedList， 有序
     }
 
     @Override

@@ -550,10 +550,13 @@ public abstract class AbstractConfig implements Serializable {
             InmemoryConfiguration config = new InmemoryConfiguration(getPrefix(), getId());
             config.addProperties(getMetaData());
             if (Environment.getInstance().isConfigCenterFirst()) {
+                // Ps: 原注释有问题， 配置中心全局 > 配置中心app
                 // The sequence would be: SystemConfiguration -> ExternalConfiguration -> AppExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
+                // system -> 配置中心app -> 配置中心全局 -> bean初始化值 -> properties文件
                 compositeConfiguration.addConfiguration(3, config);
             } else {
                 // The sequence would be: SystemConfiguration -> AbstractConfig -> ExternalConfiguration -> AppExternalConfiguration -> PropertiesConfiguration
+                // system -> bean初始化值 -> 配置中心app -> 配置中心全局 -> properties文件
                 compositeConfiguration.addConfiguration(1, config);
             }
 
