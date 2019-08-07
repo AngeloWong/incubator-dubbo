@@ -580,6 +580,17 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         return false;
     }
 
+    /**
+     * 路由链路
+     *
+     * 消费端进行监听的目录：
+     *  1.条件路由
+     *      1.1 针对单个服务      org.apache.dubbo.demo.DemoService/condition-router
+     *      1.2 针对单个应用      demo-provider/condition-router
+     *  2. 标签路由     demo-provider/tag-router
+     *  3. 动态配置     org.apache.dubbo.demo.DemoService
+     *  4. 服务提供者地址信息
+     */
     public void buildRouterChain(URL url) {
         this.setRouterChain(RouterChain.buildChain(url));
     }

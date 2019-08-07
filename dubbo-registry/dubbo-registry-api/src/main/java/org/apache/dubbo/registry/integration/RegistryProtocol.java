@@ -376,6 +376,7 @@ public class RegistryProtocol implements Protocol {
         if (!ANY_VALUE.equals(url.getServiceInterface()) && url.getParameter(REGISTER_KEY, true)) {
             registry.register(getRegisteredConsumerUrl(subscribeUrl, url));
         }
+        // 构建路由链路
         directory.buildRouterChain(subscribeUrl);
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
