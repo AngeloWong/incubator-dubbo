@@ -73,11 +73,11 @@ public class RouterChain<T> {
         this.builtinRouters = builtinRouters;
         this.routers = new CopyOnWriteArrayList<>(builtinRouters);
         /**
-         * 根据优先级排序,优先级越大越靠前执行
-         * MockInvokersSelector                                 extends AbstractRouter      Integer.MAX_VALUE;
-         * ServiceRouterFactory ----->>>>   ServiceRouter       extends ListenableRouter    200
-         * AppRouterFactory     ----->>>>   AppRouter           extengs ListenableRouter    200
+         * 根据优先级排序,优先级越小越靠前执行
          * TagRouterFactory     ----->>>>   TagRouter           extends AbstractRouter      100
+         * AppRouterFactory     ----->>>>   AppRouter           extengs ListenableRouter    200
+         * ServiceRouterFactory ----->>>>   ServiceRouter       extends ListenableRouter    200
+         * MockInvokersSelector                                 extends AbstractRouter      Integer.MAX_VALUE;
          */
         this.sort();
     }
@@ -94,6 +94,7 @@ public class RouterChain<T> {
         List<Router> newRouters = new CopyOnWriteArrayList<>();
         newRouters.addAll(builtinRouters);
         newRouters.addAll(routers);
+        // 对routers排序？ 不是 newRouters ？
         CollectionUtils.sort(routers);
         this.routers = newRouters;
     }
