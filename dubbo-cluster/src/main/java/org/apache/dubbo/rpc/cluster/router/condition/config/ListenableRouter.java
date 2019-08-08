@@ -47,6 +47,7 @@ public abstract class ListenableRouter extends AbstractRouter implements Configu
     public static final int DEFAULT_PRIORITY = 200;
     private static final Logger logger = LoggerFactory.getLogger(ListenableRouter.class);
     private ConditionRouterRule routerRule;
+    // 条件路由
     private List<ConditionRouter> conditionRouters = Collections.emptyList();
 
     public ListenableRouter(DynamicConfiguration configuration, URL url, String ruleKey) {

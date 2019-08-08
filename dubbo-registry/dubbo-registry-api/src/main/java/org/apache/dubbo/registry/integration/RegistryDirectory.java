@@ -398,15 +398,18 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      * @return
      */
     private URL mergeUrl(URL providerUrl) {
+        // 合并消费端参数,  queryMap存放consumer端参数
         providerUrl = ClusterUtils.mergeUrl(providerUrl, queryMap); // Merge the consumer side parameters
 
         providerUrl = overrideWithConfigurator(providerUrl);
 
         providerUrl = providerUrl.addParameter(Constants.CHECK_KEY, String.valueOf(false)); // Do not check whether the connection is successful or not, always create Invoker!
 
+        // directoryUrl 与 override 合并在notify的最后，这里不能够处理
         // The combination of directoryUrl and override is at the end of notify, which can't be handled here
         this.overrideDirectoryUrl = this.overrideDirectoryUrl.addParametersIfAbsent(providerUrl.getParameters()); // Merge the provider side parameters
 
+        // 合并提供者参数
         if ((providerUrl.getPath() == null || providerUrl.getPath()
                 .length() == 0) && "dubbo".equals(providerUrl.getProtocol())) { // Compatible version 1.0
             //fix by tony.chenl DUBBO-44
@@ -581,7 +584,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * 路由链路
+     * 设置服务目录的路由链路
      *
      * 消费端进行监听的目录：
      *  1.条件路由
@@ -669,6 +672,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         ReferenceConfigurationListener(RegistryDirectory directory, URL url) {
             this.directory = directory;
             this.url = url;
+            // 监听服务的configurators
             this.initWith(url.getEncodedServiceKey() + Constants.CONFIGURATORS_SUFFIX);
         }
 
@@ -683,6 +687,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         List<RegistryDirectory> listeners = new ArrayList<>();
 
         ConsumerConfigurationListener() {
+            // 监听当前消费者的configurators目录
             this.initWith(ApplicationModel.getApplication() + Constants.CONFIGURATORS_SUFFIX);
         }
 

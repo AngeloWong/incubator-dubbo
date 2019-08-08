@@ -167,6 +167,7 @@ public class ConditionRouter extends AbstractRouter implements Comparable<Router
             return invokers;
         }
         try {
+            // 当不满足when条件时，返回
             if (!matchWhen(url, invocation)) {
                 return invokers;
             }
@@ -176,6 +177,7 @@ public class ConditionRouter extends AbstractRouter implements Comparable<Router
                 return result;
             }
             for (Invoker<T> invoker : invokers) {
+                // 满足then条件时，添加到结果列表
                 if (matchThen(invoker.getUrl(), url)) {
                     result.add(invoker);
                 }

@@ -376,11 +376,13 @@ public class RegistryProtocol implements Protocol {
         if (!ANY_VALUE.equals(url.getServiceInterface()) && url.getParameter(REGISTER_KEY, true)) {
             registry.register(getRegisteredConsumerUrl(subscribeUrl, url));
         }
-        // 构建路由链路
+        // 服务目录构建路由链路
         directory.buildRouterChain(subscribeUrl);
+        // 订阅目录：providers,configurators,routers
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
 
+        // 合并出 FailoverClusterInvoker
         Invoker invoker = cluster.join(directory);
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
         return invoker;

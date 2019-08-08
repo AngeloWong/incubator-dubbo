@@ -68,6 +68,7 @@ public abstract class AbstractConfiguratorListener implements ConfigurationListe
             }
         }
 
+        // 通知覆盖configurators改动
         notifyOverrides();
     }
 

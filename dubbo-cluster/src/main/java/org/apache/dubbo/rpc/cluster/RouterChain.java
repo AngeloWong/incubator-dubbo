@@ -28,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
+ * 路由链路
  * Router chain
  */
 public class RouterChain<T> {
@@ -50,10 +51,17 @@ public class RouterChain<T> {
         List<RouterFactory> extensionFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class)
                 .getActivateExtension(url, (String[]) null);
 
+        /**
+         * 1. MockInvokersSelector
+         * 2. TagRouter
+         * 3. AppRouter
+         * 4. ServiceRouter
+         */
         List<Router> routers = extensionFactories.stream()
                 .map(factory -> factory.getRouter(url))
                 .collect(Collectors.toList());
 
+        // 初始化
         initWithRouters(routers);
     }
 
@@ -64,6 +72,13 @@ public class RouterChain<T> {
     public void initWithRouters(List<Router> builtinRouters) {
         this.builtinRouters = builtinRouters;
         this.routers = new CopyOnWriteArrayList<>(builtinRouters);
+        /**
+         * 根据优先级排序,优先级越大越靠前执行
+         * MockInvokersSelector                                 extends AbstractRouter      Integer.MAX_VALUE;
+         * ServiceRouterFactory ----->>>>   ServiceRouter       extends ListenableRouter    200
+         * AppRouterFactory     ----->>>>   AppRouter           extengs ListenableRouter    200
+         * TagRouterFactory     ----->>>>   TagRouter           extends AbstractRouter      100
+         */
         this.sort();
     }
 
