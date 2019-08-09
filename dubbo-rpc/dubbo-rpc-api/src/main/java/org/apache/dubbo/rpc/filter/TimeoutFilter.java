@@ -29,6 +29,7 @@ import org.apache.dubbo.rpc.RpcException;
 import java.util.Arrays;
 
 /**
+ * 超时过滤器
  * Log any invocation timeout, but don't stop server from running
  */
 @Activate(group = Constants.PROVIDER)

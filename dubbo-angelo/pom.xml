@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>dubbo-angelo-spi</module>
+        <module>dubbo-angelo-mock</module>
     </modules>
 
 

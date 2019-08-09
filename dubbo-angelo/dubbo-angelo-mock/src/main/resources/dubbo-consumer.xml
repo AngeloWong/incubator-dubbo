@@ -1,0 +1,19 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="demo-consumer" logger="log4j"/>
+
+    <dubbo:registry address="zookeeper://192.168.66.88:2181"/>
+
+    <dubbo:monitor address="127.0.0.1:7070" />
+
+    <bean id="test" class="com.angelo.dubbo.mock.consumer.OnInvokerTest" />
+
+    <dubbo:reference interface="com.angelo.dubbo.mock.api.HelloService" id="helloService"
+                     mock="com.angelo.dubbo.mock.api.HelloServiceMock" ><!--  mock="force: return 1" /> -->
+        <dubbo:method name="sayHello" oninvoke="test.test" async="true" timeout="1000" />
+    </dubbo:reference>
+</beans>

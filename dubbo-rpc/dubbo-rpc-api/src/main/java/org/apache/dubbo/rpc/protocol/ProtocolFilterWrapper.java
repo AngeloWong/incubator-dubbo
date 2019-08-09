@@ -70,6 +70,7 @@ public class ProtocolFilterWrapper implements Protocol {
 
                     @Override
                     public Result invoke(Invocation invocation) throws RpcException {
+                        // 创建一个匿名类Invoker, 构建过滤链
                         Result result = filter.invoke(next, invocation);
                         if (result instanceof AsyncRpcResult) {
                             AsyncRpcResult asyncResult = (AsyncRpcResult) result;

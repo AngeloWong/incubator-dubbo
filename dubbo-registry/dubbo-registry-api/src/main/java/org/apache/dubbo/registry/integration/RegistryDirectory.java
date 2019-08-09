@@ -648,6 +648,10 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
+     * 0 = {ConsumerContextFilter}
+     * 1 = {FutureFilter}
+     * 2 = {MonitorFilter}
+     * AbstractInvoker (HttpClient) -> 调用服务提供者地址
      * The delegate class, which is mainly used to store the URL address sent by the registry,and can be reassembled on the basis of providerURL queryMap overrideMap for re-refer.
      *
      * @param <T>
